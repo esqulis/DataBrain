@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DataBrain 互动效果预览</title>
+  <!-- 相对路径引用效果文件：双击本文件即可离线预览 -->
+  <link rel="stylesheet" href="assets/interactive-effects.css" />
+  <script defer src="assets/interactive-effects.js"></script>
+  <style>
+    /* ===== 以下为预览页自身的模拟布局样式（非效果文件一部分） ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #1f2d3d; }
+    #app { display: flex; min-height: 100vh; }
+    .mock-sidebar { width: 220px; background: #fff; border-right: 1px solid #e4e7ed; padding: 16px 0; flex: 0 0 auto; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; padding: 0 20px 18px; font-weight: 700; font-size: 18px; cursor: default; }
+    .logo-dot { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg, #43a88d, #d97757); display: inline-block; }
+    .mock-sidebar ul { list-style: none; }
+    .mock-sidebar li { padding: 12px 22px; cursor: pointer; font-size: 14px; color: #5a6472; }
+    .mock-sidebar li.active { color: #43a88d; font-weight: 600; background: rgba(67,168,141,.08); }
+    .ver-row { margin-top: 40px; padding: 0 22px; font-size: 12px; color: #9aa3ad; display: flex; justify-content: space-between; }
+    .content { flex: 1; padding: 24px 28px; }
+    .mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .mock-header h1 { font-size: 20px; }
+    .btn, .el-button { border: 1px solid #dcdfe6; background: #fff; color: #606266; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+    .btn-primary, .el-button--primary { background: #43a88d; border-color: #43a88d; color: #fff; }
+    .btn-secondary { background: #d97757; border-color: #d97757; color: #fff; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 18px; }
+    .brain-stat, .brain-card, .chart-card { background: #fff; border: 1px solid #ebeef5; border-radius: 10px; padding: 18px; }
+    .brain-stat-label { font-size: 13px; color: #909399; }
+    .brain-stat-value { font-size: 26px; font-weight: 700; margin-top: 6px; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+    .chart-card { height: 150px; display: flex; align-items: center; justify-content: center; color: #c0c4cc; }
+    .data-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; margin-bottom: 18px; }
+    .data-table th, .data-table td { padding: 10px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid #ebeef5; }
+    .data-table th { background: #fafafa; color: #909399; font-weight: 600; }
+    .chat-container { background: #fff; border: 1px solid #ebeef5; border-radius: 10px; padding: 16px; }
+    .chat-messages { height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .chat-msg { max-width: 70%; padding: 10px 14px; border-radius: 12px; font-size: 13px; }
+    .chat-msg.user { align-self: flex-end; background: #43a88d; color: #fff; }
+    .chat-msg.assistant { align-self: flex-start; background: #f2f3f5; }
+    .chat-input-area { display: flex; gap: 8px; }
+    .chat-input-area input { flex: 1; border: 1px solid #dcdfe6; border-radius: 6px; padding: 9px 12px; font-size: 13px; outline: none; }
+    .banner { background: #fff8e6; border: 1px solid #ffe1a8; color: #8a6d3b; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 18px; }
+    .demo-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <aside class="mock-sidebar">
+      <div class="sidebar-logo"><span class="logo-dot"></span><span class="logo-text">DataBrain</span></div>
+      <ul>
+        <li class="active">仪表盘</li>
+        <li>智能对话</li>
+        <li>数据上传</li>
+        <li>报告中心</li>
+        <li>设置</li>
+      </ul>
+      <div class="ver-row"><span class="ver-label">版本</span><span class="ver-value">v1.0</span></div>
+    </aside>
+
+    <main class="content">
+      <div class="banner">这是 <b>互动效果预览页</b>（fx-preview.html）：移动鼠标看光晕、点击按钮看涟漪、悬停卡片看倾斜、悬停左侧导航看指示条、点击表格行选中、滚动页面看回到顶部按钮。正式界面以 start-all.bat 启动后的 DataBrain 为准。</div>
+
+      <div class="mock-header">
+        <h1>仪表盘</h1>
+        <div>
+          <button class="btn">普通按钮</button>
+          <button class="btn-primary">主按钮</button>
+          <button class="btn-secondary">次按钮</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="brain-stat"><div class="brain-stat-label">数据表总数</div><div class="brain-stat-value">12,580</div></div>
+        <div class="brain-stat"><div class="brain-stat-label">本月查询次数</div><div class="brain-stat-value">3,942.5</div></div>
+        <div class="brain-stat"><div class="brain-stat-label">分析完成率</div><div class="brain-stat-value">87%</div></div>
+      </div>
+
+      <div class="cards">
+        <div class="brain-card">
+          <h3 style="font-size:15px;margin-bottom:10px;">智能大脑卡片</h3>
+          <p style="font-size:13px;color:#909399;">悬停我试试 3D 倾斜效果。下面是建议问句（涟漪目标）：</p>
+          <div class="demo-row">
+            <button class="chat-suggestion-chip btn">分析销售趋势</button>
+            <button class="chat-suggestion-chip btn">生成月度报告</button>
+          </div>
+        </div>
+        <div class="chart-card">图表卡片（悬停倾斜）</div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>名称</th><th>类型</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td>financial_asset_management</td><td>结构化</td><td>已分析</td></tr>
+          <tr><td>telecom_operations</td><td>结构化</td><td>已分析</td></tr>
+          <tr><td>healthcare_analytics</td><td>结构化</td><td>待分析</td></tr>
+        </tbody>
+      </table>
+
+      <div class="chat-container">
+        <div class="chat-messages" id="mockMsgs">
+          <div class="chat-msg assistant">你好，我是 DataBrain 智能助手。</div>
+          <div class="chat-msg user">帮我分析一下医疗数据</div>
+        </div>
+        <div class="chat-input-area">
+          <input id="mockInput" placeholder="输入消息，聚焦看发光边框…" />
+          <button class="btn-primary" id="mockSend">发送</button>
+          <button class="btn" id="mockThink">模拟 AI 思考</button>
+        </div>
+      </div>
+
+      <div style="height:600px;display:flex;align-items:center;justify-content:center;color:#c0c4cc;">占位内容（向下滚动后右下角出现「回到顶部」）</div>
+    </main>
+  </div>
+
+  <script>
+    // 预览页演示逻辑
+    document.getElementById('mockSend').addEventListener('click', function () {
+      var box = document.getElementById('mockMsgs');
+      var input = document.getElementById('mockInput');
+      var text = input.value.trim() || '（示例消息）';
+      var u = document.createElement('div');
+      u.className = 'chat-msg user'; u.textContent = text;
+      box.appendChild(u);
+      var a = document.createElement('div');
+      a.className = 'chat-msg assistant'; a.textContent = '收到，正在为你分析：' + text;
+      box.appendChild(a);
+      box.scrollTop = box.scrollHeight;
+      input.value = '';
+    });
+    document.getElementById('mockThink').addEventListener('click', function () {
+      if (window.DataBrainFX) {
+        DataBrainFX.thinking.show('#mockMsgs');
+        var box = document.getElementById('mockMsgs');
+        box.scrollTop = box.scrollHeight;
+        setTimeout(function () { DataBrainFX.thinking.hide(); }, 2500);
+      }
+    });
+  </script>
+</body>
+</html>

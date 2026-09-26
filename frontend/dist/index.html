@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataBrain — 智能数据分析平台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- 引入无衬线与衬线字体，完美契合工作台的高级审美 -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ 统一设计系统 — 奶油微瑕光影美学 ═══ */
+:root {
+  --bg-cream: #f5f0e8;
+  --bg-sidebar: #fbf7f2;
+  --surface: #ffffff;
+  --surface-glass: rgba(255, 255, 255, 0.65);
+  
+  --text-primary: #191919;
+  --text-secondary: #6b625a;
+  --text-muted: #9e968e;
+  
+  --accent-green: #43a88d;
+  --accent-green-hover: #369c80;
+  --accent-green-soft: rgba(67, 168, 141, 0.12);
+  
+  --accent-orange: #d97757;
+  --accent-orange-hover: #c56545;
+  --accent-orange-soft: rgba(217, 119, 87, 0.12);
+  
+  --border: #e5e0d8;
+  --border-light: #ede9e2;
+  --border-hover: #d1c8b8;
+  
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 16px 40px rgba(67, 168, 141, 0.1);
+  
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  
+  --font-serif: 'Newsreader', 'Noto Serif SC', serif;
+  --font-sans: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-cream);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ═══ 环境光晕 (使用工作台的主题色) ═══ */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+  animation: floatOrb 12s ease-in-out infinite alternate;
+}
+.bg-orb-1 {
+  width: 600px; height: 600px;
+  background: var(--accent-green-soft);
+  top: -200px; right: -150px;
+}
+.bg-orb-2 {
+  width: 500px; height: 500px;
+  background: var(--accent-orange-soft);
+  bottom: -100px; left: -150px;
+  animation-delay: -5s;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-30px, 40px) scale(1.1); }
+}
+
+/* ═══ 布局容器 ═══ */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 1;
+}
+
+section { padding: 96px 0; position: relative; }
+
+/* ═══ 导航栏 (赛博极简 + 磨砂玻璃) ═══ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(245, 240, 232, 0.75);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s var(--ease);
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none;
+  transition: transform 0.3s var(--ease);
+}
+.nav-logo:hover {
+  transform: scale(1.02);
+}
+.logo-icon {
+  width: 32px; height: 32px;
+  border: 2.5px solid var(--accent-orange);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.logo-icon::after {
+  content: '';
+  width: 10px; height: 10px;
+  background: var(--accent-orange);
+  border-radius: 50%;
+}
+.logo-text {
+  font-family: var(--font-serif);
+  font-size: 20px; font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* ═══ 英雄首屏 ═══ */
+.hero {
+  padding: 180px 0 100px;
+  text-align: center;
+}
+.hero-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 100px;
+  font-size: 13px; font-weight: 500;
+  margin-bottom: 32px;
+  letter-spacing: 0.5px;
+  box-shadow: var(--shadow-sm);
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+.hero h1 span {
+  color: var(--accent-green);
+}
+.hero p {
+  font-size: 17px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.8;
+}
+.hero-btns {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+}
+
+/* ═══ 按钮系统 ═══ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 32px;
+  font-family: var(--font-sans);
+  font-size: 15px; font-weight: 500;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary {
+  background: var(--accent-green);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 16px var(--accent-green-soft);
+}
+.btn-primary:hover {
+  background: var(--accent-green-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--accent-green-soft);
+}
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-sidebar);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ═══ 特性网格 & 高级微交互卡片 ═══ */
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+.section-desc {
+  font-size: 16px; color: var(--text-secondary); 
+  max-width: 500px; margin: 16px auto 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* 卡片容器：优雅的内阴影与悬停发光 */
+.feature-card {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+/* 悬停状态：微妙的上浮、边框变绿、阴影加深 */
+.feature-card:hover {
+  background: var(--surface);
+  border-color: var(--accent-green);
+  box-shadow: 0 16px 40px rgba(67, 168, 141, 0.08);
+  transform: translateY(-4px);
+}
+
+/* 图标容器：极简线性 SVG */
+.card-icon {
+  width: 44px; 
+  height: 44px;
+  display: flex; 
+  align-items: center; 
+  justify-content: flex-start;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  transition: all 0.4s ease;
+}
+
+.card-icon svg {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 悬停时图标微动效：变色并带有弹性的放大 */
+.feature-card:hover .card-icon {
+  color: var(--accent-green);
+}
+.feature-card:hover .card-icon svg {
+  transform: scale(1.15) rotate(-2deg);
+}
+
+/* 卡片排版层次 */
+.card-content {
+  flex-grow: 1;
+}
+
+.card-content h3 {
+  font-family: var(--font-serif);
+  font-size: 19px; 
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.card-content p {
+  font-size: 14px; 
+  color: var(--text-secondary); 
+  line-height: 1.7;
+}
+
+.feature-card:hover .card-content h3 {
+  color: var(--accent-green);
+}
+
+/* 点睛之笔：右下角隐藏的动态箭头 */
+.card-arrow {
+  position: absolute;
+  bottom: 36px;
+  right: 32px;
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--accent-green);
+  opacity: 0;
+  transform: translateX(-15px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.feature-card:hover .card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ═══ 指标面板 ═══ */
+.stats-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 32px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.stat-value {
+  font-family: var(--font-serif);
+  font-size: 36px; font-weight: 700;
+  color: var(--accent-orange);
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 13px; color: var(--text-secondary); font-weight: 500;
+}
+
+/* ═══ 工作流步骤 ═══ */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.step-card {
+  background: transparent;
+  border-top: 1px solid var(--border);
+  padding: 32px 0;
+  position: relative;
+  transition: all 0.3s var(--ease);
+}
+.step-card:hover {
+  border-top-color: var(--accent-orange);
+}
+.step-num {
+  font-family: var(--font-serif);
+  font-size: 48px; font-weight: 500;
+  color: var(--border-hover);
+  line-height: 1;
+  margin-bottom: 20px;
+  transition: color 0.3s var(--ease);
+}
+.step-card:hover .step-num {
+  color: var(--accent-orange);
+}
+.step-card h4 {
+  font-family: var(--font-sans);
+  font-size: 16px; font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+.step-card p {
+  font-size: 14px; color: var(--text-secondary); line-height: 1.7;
+}
+
+/* ═══ 核心技术指标表格 ═══ */
+.cap-table-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.cap-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.cap-table th, .cap-table td {
+  text-align: left;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-light);
+}
+.cap-table th {
+  background: var(--bg-sidebar);
+  font-family: var(--font-sans);
+  font-size: 13px; font-weight: 600;
+  color: var(--text-secondary);
+}
+.cap-table td {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+.cap-table tr:last-child td { border-bottom: none; }
+.cap-table tr:hover td { background: var(--bg-cream); }
+.check { color: var(--accent-green); font-weight: 600; }
+.tag {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--border-light);
+  color: var(--text-secondary);
+}
+.tag-green { background: var(--accent-green-soft); color: var(--accent-green-hover); }
+.tag-orange { background: var(--accent-orange-soft); color: var(--accent-orange-hover); }
+
+/* ═══ Footer ═══ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 48px 32px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ═══ 滚动动画 ═══ */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0;
+  animation: fade-up 0.8s var(--ease) forwards;
+  animation-play-state: paused;
+}
+.reveal.visible { animation-play-state: running; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 36px; }
+  .hero p { font-size: 15px; }
+  section { padding: 64px 0; }
+  .feature-card { padding: 24px; }
+  .cap-table th, .cap-table td { padding: 12px 16px; }
+}
+
+/* 选中高亮 */
+::selection { background: var(--accent-green-soft); color: var(--accent-green-hover); }
+</style>
+</head>
+<body>
+
+<!-- 动态环境光晕 -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<!-- 导航栏 -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <div class="logo-icon"></div>
+      <span class="logo-text">DataBrain</span>
+    </a>
+    <span style="font-size:13px;color:var(--text-muted);font-weight:500;">v4.0.1</span>
+  </div>
+</nav>
+
+<!-- 英雄首屏 -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge reveal">✨ 智能数据探索新纪元</div>
+    <h1 class="reveal delay-1">用自然语言对话<br>完成<span>数据科学分析</span></h1>
+    <p class="reveal delay-2">
+      DataBrain 是一款全链路智能数据分析平台。上传数据即可用中文提问，系统自动转化为查询语句、执行分析、生成图表与决策报告——让洞察获取像日常对话一样自然。
+    </p>
+    <div class="hero-btns reveal delay-3">
+      <a href="/chat" class="btn btn-primary">
+        开始探索
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#features" class="btn btn-secondary">
+        了解架构
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 核心特性 -->
+<section id="features" style="scroll-margin-top:80px">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2 class="section-title">重塑数据分析体验</h2>
+      <p class="section-desc">基于原生智能架构，自动调度底层工具链，为您完成从原始数据到可视化报告的全流程处理。</p>
+    </div>
+
+    <!-- 拥有高级微交互的全新 SVG 图标卡片网格 -->
+    <div class="features-grid">
+      
+      <!-- 卡片 1 -->
+      <div class="feature-card reveal delay-1">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>NL → SQL 语义解析</h3>
+          <p>通过自然语言描述需求，系统精确理解意图并自动生成执行脚本。支持多表关联、复杂聚合及原生中文列名匹配。</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </div>
+
+      <!-- 卡片 2 -->
+      <div class="feature-card reveal delay-2">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>智能数据图表化</h3>
+          <p>基于数据结构特征，自动为其匹配最佳图表形态（柱状/折线/散点/饼图等），支持高定制度的交互式数据下钻。</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </div>
+
+      <!-- 卡片 3 -->
+      <div class="feature-card reveal delay-3">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            <polyline points="17 6 23 6 23 12"></polyline>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>时序与趋势洞察</h3>
+          <p>内置预测算法引擎，自动识别日期维度与业务目标，瞬间输出趋势拟合线及合理的置信区间区间预估。</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </div>
+
+      <!-- 卡片 4 -->
+      <div class="feature-card reveal delay-1">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>自动决策报告</h3>
+          <p>将琐碎的分析步骤一键沉淀为包含描述性统计、异常标识与深度业务洞察的富文本排版报告，直接服务管理决策。</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </div>
+
+      <!-- 卡片 5 -->
+      <div class="feature-card reveal delay-2">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>多源数据融合</h3>
+          <p>无缝适配 CSV、Excel 平面文件，原生支持接入 MySQL、PostgreSQL、SQLite 等关系型数据库并自动推断 Schema。</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </div>
+
+      <!-- 卡片 6 -->
+      <div class="feature-card reveal delay-3">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>逻辑记忆与复用</h3>
+          <p>平台会记住您的核心指标计算口径与偏好分析模型，遇到相似场景自动唤醒经验复用，越用越顺手。</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 核心指标 -->
+<section style="padding-top:0">
+  <div class="container">
+    <div class="stats-bar reveal">
+      <div><div class="stat-value">4+</div><div class="stat-label">主流数据源兼容</div></div>
+      <div><div class="stat-value">7</div><div class="stat-label">核心分析算子</div></div>
+      <div><div class="stat-value">6</div><div class="stat-label">可视化图表库</div></div>
+      <div><div class="stat-value">3</div><div class="stat-label">可导出报告格式</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 工作流 -->
+<section style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2 class="section-title">化繁为简的三步工作流</h2>
+    </div>
+
+    <div class="steps">
+      <div class="step-card reveal delay-1">
+        <div class="step-num">01</div>
+        <h4>数据接入与解析</h4>
+        <p>拖拽上传静态表格或配置数据库连接，系统在极短时间内完成元数据抽取与结构理解。</p>
+      </div>
+
+      <div class="step-card reveal delay-2">
+        <div class="step-num">02</div>
+        <h4>自然语言交互</h4>
+        <p>在对话框中直接抛出业务问题，底层调度器将自适应选择统计、聚合或预测工具进行多步推演。</p>
+      </div>
+
+      <div class="step-card reveal delay-3">
+        <div class="step-num">03</div>
+        <h4>多维结果展示</h4>
+        <p>秒级同屏呈现宽表数据、交互式图表与文字解读，并提供一键生成全局分析报告功能。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术指标表格 -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <h2 class="section-title">核心技术优势</h2>
+      <p class="section-desc">以工程化标准构建，保障数据分析的准确性、扩展性与响应速度。</p>
+    </div>
+
+    <div class="cap-table-wrapper reveal delay-1">
+      <table class="cap-table">
+        <thead>
+          <tr><th>技术维度</th><th>实现状态</th><th>底层方案架构</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>语义转化引擎</strong></td>
+            <td><span class="check">✓</span> 稳定可用</td>
+            <td><span class="tag tag-green">NL2SQL</span> 定制化解析器</td>
+          </tr>
+          <tr>
+            <td><strong>跨数据源直连</strong></td>
+            <td><span class="check">✓</span> 稳定可用</td>
+            <td>标准 SQL 方言适配 (MySQL / SQLite 等)</td>
+          </tr>
+          <tr>
+            <td><strong>科学统计计算</strong></td>
+            <td><span class="check">✓</span> 稳定可用</td>
+            <td><span class="tag tag-orange">Data Science</span> 底层算子集成</td>
+          </tr>
+          <tr>
+            <td><strong>流式交互渲染</strong></td>
+            <td><span class="check">✓</span> 稳定可用</td>
+            <td><span class="tag tag-green">ECharts 5</span> 响应式前端驱动</td>
+          </tr>
+          <tr>
+            <td><strong>时序预测建模</strong></td>
+            <td><span class="check">✓</span> 稳定可用</td>
+            <td> Prophet / 回归模型降级保障</td>
+          </tr>
+          <tr>
+            <td><strong>多模型底层适配</strong></td>
+            <td><span class="check">✓</span> 稳定可用</td>
+            <td>支持 OpenAI / DeepSeek 等主流接口</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>DataBrain · 智能数据分析平台 · © 2026 保留所有权利</p>
+  </div>
+</footer>
+
+<script>
+// 页面滚动监听：吸顶导航样式调整
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 20) {
+    navbar.style.boxShadow = 'var(--shadow-sm)';
+    navbar.style.background = 'rgba(245, 240, 232, 0.9)';
+  } else {
+    navbar.style.boxShadow = 'none';
+    navbar.style.background = 'rgba(245, 240, 232, 0.75)';
+  }
+});
+
+// 优雅的滚动出现动画 (IntersectionObserver)
+const observerOptions = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.15
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // 动画触发后取消监听，提升性能
+      observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

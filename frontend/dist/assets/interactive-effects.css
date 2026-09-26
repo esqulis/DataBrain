@@ -1,0 +1,260 @@
+/* =====================================================================
+   DataBrain Interactive Effects v1.0.0
+   增量视觉增强样式：全部以 html.fx-on 作用域隔离。
+   JS（interactive-effects.js）未加载或初始化失败时，本文件完全惰性，
+   不影响原应用任何样式。
+   ===================================================================== */
+
+html.fx-on {
+  --fx-primary: #43a88d;
+  --fx-primary-dark: #369c80;
+  --fx-accent: #d97757;
+  --fx-primary-soft: rgba(67, 168, 141, 0.14);
+  --fx-primary-softer: rgba(67, 168, 141, 0.08);
+}
+
+/* ---------- 1. 鼠标跟随光晕（脚本创建 #fx-glow） ---------- */
+html.fx-on #fx-glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      rgba(67, 168, 141, 0.15) 0%,
+      rgba(67, 168, 141, 0.05) 42%,
+      transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  will-change: transform;
+}
+html.fx-on #fx-glow.fx-visible { opacity: 1; }
+
+/* ---------- 2. 按钮涟漪（JS 注入 span.fx-ripple） ---------- */
+html.fx-on .fx-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.18;
+  transform: scale(0);
+  pointer-events: none;
+  z-index: 0;
+  animation: fxRipple 0.65s ease-out forwards;
+}
+@keyframes fxRipple {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* ---------- 3. 卡片悬停倾斜（JS 加类，这里只给过渡） ---------- */
+html.fx-on .fx-tiltable { transition: transform 0.16s ease-out, box-shadow 0.25s ease; }
+html.fx-on .fx-tilting  { transition: box-shadow 0.25s ease; }
+html.fx-on .fx-tiltable:hover {
+  box-shadow: 0 14px 34px rgba(31, 45, 61, 0.14);
+}
+
+/* ---------- 4. 侧边栏导航：悬停底纹 + 滑动指示条 ---------- */
+html.fx-on .fx-nav-item { position: relative; }
+html.fx-on .fx-nav-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--fx-primary-soft);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+html.fx-on .fx-nav-item:hover::before { opacity: 1; }
+
+html.fx-on #fx-nav-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 0;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, var(--fx-primary), var(--fx-accent));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease;
+  will-change: transform;
+}
+
+/* ---------- 5. Logo 悬停动画 ---------- */
+html.fx-on .sidebar-logo { transition: transform 0.3s ease; }
+html.fx-on .sidebar-logo:hover { transform: scale(1.04) rotate(-1deg); }
+html.fx-on .sidebar-logo:hover .logo-text {
+  background: linear-gradient(90deg, var(--fx-primary), var(--fx-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- 6. 侧栏折叠手柄（脚本创建 #fx-sb-toggle） ---------- */
+html.fx-on #fx-sb-toggle {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 52px;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  background: rgba(67, 168, 141, 0.75);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.35;
+  z-index: 2100;
+  transition: opacity 0.2s ease, left 0.3s ease, width 0.2s ease;
+}
+html.fx-on #fx-sb-toggle:hover { opacity: 1; width: 19px; }
+
+/* 折叠态：隐藏侧栏文字（JS 给侧栏加 .fx-sb-collapsed） */
+html.fx-on .fx-sb-collapsed {
+  overflow: hidden !important;
+  white-space: nowrap;
+}
+html.fx-on .fx-sb-collapsed .logo-text,
+html.fx-on .fx-sb-collapsed .ver-row,
+html.fx-on .fx-sb-collapsed .ver-label,
+html.fx-on .fx-sb-collapsed .ver-value,
+html.fx-on .fx-sb-collapsed span {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* ---------- 7. 输入框聚焦发光 ---------- */
+html.fx-on input:focus,
+html.fx-on textarea:focus {
+  box-shadow: 0 0 0 3px rgba(67, 168, 141, 0.18) !important;
+  border-color: var(--fx-primary) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+html.fx-on .el-input__wrapper.is-focus,
+html.fx-on .el-select__wrapper.is-focused,
+html.fx-on .el-textarea__inner:focus {
+  box-shadow: 0 0 0 3px rgba(67, 168, 141, 0.16) !important;
+}
+html.fx-on .chat-input-area:focus-within {
+  box-shadow: 0 6px 26px rgba(67, 168, 141, 0.16);
+  transition: box-shadow 0.25s ease;
+}
+
+/* ---------- 8. 对话消息入场动画（JS 加 .fx-msg-in） ---------- */
+html.fx-on .fx-msg-in {
+  animation: fxMsgIn 0.45s cubic-bezier(0.2, 0.9, 0.25, 1.08) both;
+}
+@keyframes fxMsgIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- 9. “AI 正在思考”三点跳动（脚本创建 .fx-thinking） ---------- */
+html.fx-on .fx-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 16px;
+  margin: 6px 0;
+  border-radius: 12px;
+  background: var(--fx-primary-soft);
+}
+html.fx-on .fx-thinking i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fx-primary);
+  animation: fxDot 1.1s ease-in-out infinite;
+}
+html.fx-on .fx-thinking i:nth-child(2) { animation-delay: 0.15s; }
+html.fx-on .fx-thinking i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes fxDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+  30%           { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ---------- 10. 页面切换淡入（JS 给 #app 加 .fx-page-enter） ---------- */
+html.fx-on #app.fx-page-enter { animation: fxPageIn 0.32s ease-out; }
+@keyframes fxPageIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- 11. 表格行悬停 / 选中高亮 ---------- */
+html.fx-on .el-table__body tr,
+html.fx-on .data-table tbody tr { transition: background-color 0.18s ease; }
+html.fx-on .el-table__body tr.hover-row > td.el-table__cell,
+html.fx-on .el-table__body tr:hover > td.el-table__cell,
+html.fx-on .data-table tbody tr:hover {
+  background-color: var(--fx-primary-softer) !important;
+}
+html.fx-on tr.fx-row-sel,
+html.fx-on tr.fx-row-sel > td,
+html.fx-on tr.fx-row-sel > td.el-table__cell {
+  background-color: rgba(67, 168, 141, 0.17) !important;
+}
+
+/* ---------- 12. Toast 提示增强 ---------- */
+html.fx-on .el-message {
+  border-radius: 10px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14) !important;
+  animation: fxToastIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+@keyframes fxToastIn {
+  from { opacity: 0; transform: translate(-50%, -14px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---------- 13. 回到顶部按钮（脚本创建 #fx-backtop） ---------- */
+html.fx-on #fx-backtop {
+  position: fixed;
+  right: 28px;
+  bottom: 36px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: var(--fx-primary);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(67, 168, 141, 0.4);
+  z-index: 2000;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+}
+html.fx-on #fx-backtop.fx-show { opacity: 1; transform: none; pointer-events: auto; }
+html.fx-on #fx-backtop:hover { background: var(--fx-primary-dark); transform: translateY(-2px); }
+
+/* ---------- 减弱动效（系统 prefers-reduced-motion 或 JS 加 .fx-reduced） ---------- */
+html.fx-on.fx-reduced #fx-glow { display: none; }
+html.fx-on.fx-reduced .fx-msg-in,
+html.fx-on.fx-reduced #app.fx-page-enter,
+html.fx-on.fx-reduced .el-message {
+  animation: none !important;
+}
+html.fx-on.fx-reduced .fx-tiltable { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  html.fx-on #fx-glow { display: none; }
+  html.fx-on .fx-msg-in,
+  html.fx-on #app.fx-page-enter { animation: none !important; }
+}

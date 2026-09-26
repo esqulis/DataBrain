@@ -1,0 +1,42 @@
+# 数据存储配置 —— 按表粒度控制存储策略
+
+storage:
+  # 默认策略：小表内存，大表 SQLite
+  default_strategy: auto  # auto | sqlite | memory | parquet
+
+  # SQLite 持久化引擎（磁盘）
+  sqlite:
+    db_path: ./data/engine.db
+    # 从 SQLite 加载到 pandas 的上限
+    max_load_rows: 1000
+    # 超过此行数时，统计查询走 SQL 聚合而非 pandas
+    agg_threshold: 5000
+
+  # 内存缓存（仅对经常访问的小表）
+  memory_cache:
+    enabled: false
+    max_cache_rows: 5000
+    max_tables: 3
+
+  # 表级覆盖（按表名指定策略）
+  per_table:
+    telecom_operations_db:
+      strategy: sqlite
+      max_load_rows: 2000
+    sample_sales:
+      strategy: memory  # 小表示例数据放内存
+    "financial_*":
+      strategy: sqlite  # 通配符匹配
+
+# 上传处理配置
+upload:
+  csv_chunk_size: 5000       # CSV 分块行数
+  excel_max_rows: 50000      # Excel 截断上限
+  temp_dir: ./data/tmp       # 上传临时目录
+  cleanup_temp: true          # 上传后删除临时文件
+
+# 分析工具配置
+analyze:
+  # 大表分析策略：走 SQL 聚合而非加载全量到 pandas
+  use_sql_aggregation: true
+  max_unique_categories: 50  # value_counts 上限

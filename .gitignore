@@ -1,0 +1,45 @@
+# ── 敏感文件（切勿提交）──
+brain_configs.json.bak
+*.key
+.env
+.env.*
+secrets.*
+
+# ── 数据库（运行时生成）──
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# ── 生成产物 ──
+backend/reports/
+backend/data/
+*.log
+*.pid
+run.pid
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+build/
+/dist/
+*.egg-info/
+
+# ── 编辑器 / 系统 ──
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Node ──
+node_modules/
+npm-debug.log*

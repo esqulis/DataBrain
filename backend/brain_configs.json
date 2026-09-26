@@ -1,0 +1,27 @@
+{
+  "configs": [
+    {
+      "id": "520d0bc4",
+      "name": "ds",
+      "adapter_type": "openai_compatible",
+      "provider": "custom",
+      "api_key": "",
+      "secret_key": "",
+      "base_url": "https://api.deepseek.com",
+      "model": "",
+      "extra_params": {}
+    },
+    {
+      "id": "31a0bf4c",
+      "name": "k-deepseek",
+      "adapter_type": "openai_compatible",
+      "provider": "custom",
+      "api_key": "",
+      "secret_key": "",
+      "base_url": "",
+      "model": "",
+      "extra_params": {}
+    }
+  ],
+  "active_id": "31a0bf4c"
+}
